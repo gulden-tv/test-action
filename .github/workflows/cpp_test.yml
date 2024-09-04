@@ -1,0 +1,46 @@
+name: C++ Assignments Test
+
+on:
+  push:
+    paths:
+      - 'task01/**'  # Запускать workflow при изменениях
+  pull_request:
+    paths:
+      - 'task/**'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Install GCC
+      run: sudo apt-get install g++ -y
+
+    - name: Find and compile student programs
+      run: |
+        for dir in $(find assignments -type d); do
+          for file in $dir/*.cpp; do
+            echo "Compiling $file"
+            g++ -pthread -o ${file%.cpp} $file
+          done
+        done
+
+    - name: Run tests for each program
+      run: |
+        for dir in $(find assignments -type d); do
+          for exe in $dir/*; do
+            if [[ -x "$exe" ]]; then
+              echo "Running $exe with input1.txt"
+              $exe < $dir/input1.txt > $dir/output1.txt
+              diff $dir/output1.txt $dir/expected_output1.txt
+
+              echo "Running $exe with input2.txt"
+              $exe < $dir/input2.txt > $dir/output2.txt
+              diff $dir/output2.txt $dir/expected_output2.txt
+            fi
+          done
+        done
+
