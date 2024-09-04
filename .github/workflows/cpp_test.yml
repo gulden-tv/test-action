@@ -3,10 +3,10 @@ name: C++ Assignments Test
 on:
   push:
     paths:
-      - 'task01/**'  # Запускать workflow при изменениях
+      - 'task*/**'  # Запускать workflow при изменениях в папках task01, task02, ...
   pull_request:
     paths:
-      - 'task01/**'
+      - 'task*/**'
 
 jobs:
   build-and-test:
@@ -21,7 +21,7 @@ jobs:
 
     - name: Find and compile student programs
       run: |
-        for dir in $(find assignments -type d); do
+        for dir in $(find . -type d -name 'task*'); do
           for file in $dir/*.cpp; do
             echo "Compiling $file"
             g++ -pthread -o ${file%.cpp} $file
@@ -30,13 +30,13 @@ jobs:
 
     - name: Run tests for each program
       run: |
-        for dir in $(find assignments -type d); do
+        for dir in $(find . -type d -name 'task*'); do
           for exe in $dir/*; do
             if [[ -x "$exe" ]]; then
               echo "Running $exe with input1.txt"
               $exe < $dir/input1.txt > $dir/output1.txt
               diff $dir/output1.txt $dir/expected_output1.txt
+
             fi
           done
         done
-
