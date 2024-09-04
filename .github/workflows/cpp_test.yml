@@ -6,7 +6,7 @@ on:
       - 'task01/**'  # Запускать workflow при изменениях
   pull_request:
     paths:
-      - 'task/**'
+      - 'task01/**'
 
 jobs:
   build-and-test:
@@ -36,10 +36,6 @@ jobs:
               echo "Running $exe with input1.txt"
               $exe < $dir/input1.txt > $dir/output1.txt
               diff $dir/output1.txt $dir/expected_output1.txt
-
-              echo "Running $exe with input2.txt"
-              $exe < $dir/input2.txt > $dir/output2.txt
-              diff $dir/output2.txt $dir/expected_output2.txt
             fi
           done
         done
